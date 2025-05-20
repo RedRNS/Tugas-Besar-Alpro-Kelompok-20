@@ -159,7 +159,7 @@ func saranHemat() {
 func cetakLaporan() {
 	fmt.Println("=== Laporan Pengeluaran ===")
 	perKategori := map[string]float64{}
-	for _, p := range daftarPengeluaran {
+	for _, p := range daftarPengeluaran { // _ untuk mengabaikan index
 		perKategori[p.Kategori] += p.Jumlah
 	}
 	fmt.Println("Pengeluaran per kategori:")
@@ -178,28 +178,12 @@ func cariPengeluaran() {
 	}
 	query := strings.ToLower(inputTeks("Masukkan kategori yang dicari: "))
 
-	// Sequential Search
-	hasilSeq := []Pengeluaran{}
-	for _, p := range daftarPengeluaran {
-		if strings.ToLower(p.Kategori) == query {
-			hasilSeq = append(hasilSeq, p)
-		}
-	}
-	fmt.Println("Hasil Pencarian Sequential:")
-	if len(hasilSeq) == 0 {
-		fmt.Println("Tidak ada pengeluaran pada kategori tersebut.")
-	} else {
-		for _, p := range hasilSeq {
-			fmt.Printf("- %.2f\n", p.Jumlah)
-		}
-	}
-
 	// Binary Search melalui urutan insertion sort
-	cats := make([]string, len(daftarPengeluaran))
+	cats := make([]string, len(daftarPengeluaran)) // membuat slice untuk kategori dan membuatnya jadi lowercase
 	for i, p := range daftarPengeluaran {
 		cats[i] = strings.ToLower(p.Kategori)
 	}
-	// Insertion Sort pada cats
+	// Insertion Sort pada cats (string di urut menggunakan urutan leksikografis)
 	for i := 1; i < len(cats); i++ {
 		kunci := cats[i]
 		j := i - 1
@@ -209,7 +193,7 @@ func cariPengeluaran() {
 		}
 		cats[j+1] = kunci
 	}
-	// Binary Search
+	// Binary Search (O(log n))
 	bawah, atas := 0, len(cats)-1
 	ketemu := false
 	for bawah <= atas {
@@ -229,12 +213,29 @@ func cariPengeluaran() {
 	} else {
 		fmt.Println("Kategori tidak ditemukan pada daftar tersortir.")
 	}
+
+	// Sequential Search (Linear Search) - O(n)
+	hasilSeq := []Pengeluaran{}
+	for _, p := range daftarPengeluaran {
+		if strings.ToLower(p.Kategori) == query {
+			hasilSeq = append(hasilSeq, p)
+		}
+	}
+	fmt.Println("Hasil Pencarian Sequential:")
+	if len(hasilSeq) == 0 {
+		fmt.Println("Tidak ada pengeluaran pada kategori tersebut.")
+	} else {
+		for _, p := range hasilSeq {
+			fmt.Printf("- %.2f\n", p.Jumlah)
+		}
+	}
+
 }
 
 func urutkanPengeluaran() {
 	fmt.Println("Pilih metode:")
-	fmt.Println("1. Selection Sort berdasarkan Jumlah")
-	fmt.Println("2. Insertion Sort berdasarkan Kategori")
+	fmt.Println("1. Berdasarkn Jumlah (Selection Sort)")
+	fmt.Println("2. Berdasarkan Kategori (Insertion Sort)")
 	metode := inputAngkaInt("Opsi: ")
 	switch metode {
 	case 1:
